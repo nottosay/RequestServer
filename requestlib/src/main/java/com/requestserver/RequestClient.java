@@ -167,6 +167,8 @@ public class RequestClient {
         mHandler.post(runnable);
     }
 
+
+
     public RequestClient newCall(Request request) {
         requestCall = mOkHttpClient.newCall(request);
         return mInstance;

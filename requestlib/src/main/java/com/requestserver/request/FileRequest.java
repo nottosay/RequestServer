@@ -3,6 +3,7 @@ package com.requestserver.request;
 import android.text.TextUtils;
 
 import com.requestserver.RequestClient;
+import com.requestserver.callback.Callback;
 
 import java.io.File;
 import java.util.Map;
@@ -49,19 +50,25 @@ public class FileRequest extends HttpRequest {
 
     @Override
     public RequestBody buildRequestBody() {
-        RequestBody requestBody = RequestBody.create(mediaType, file);
+        return RequestBody.create(mediaType, file);
+    }
+
+    @Override
+    public RequestBody wrapRequestBody(RequestBody requestBody, final Callback callback) {
+        if (callback == null) {
+            return requestBody;
+        }
         DecorateRequestBody decorateRequestBody = new DecorateRequestBody(requestBody, new DecorateRequestBody.ProgressListner() {
             @Override
-            public void onProgress(long bytesWritten, long totalSize) {
+            public void onProgress(final long bytesWritten,final long totalSize) {
                 RequestClient.getInstance().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
+                        callback.onProgress(bytesWritten * 1.0f / totalSize);
                     }
                 });
             }
         });
-
         return decorateRequestBody;
     }
 

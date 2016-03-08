@@ -1,6 +1,7 @@
 package com.requestserver.request;
 
 import com.requestserver.RequestClient;
+import com.requestserver.callback.Callback;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -42,20 +43,27 @@ public class FormRequest extends HttpRequest {
                 RequestBody fileBody = RequestBody.create(MediaType.parse("application/octet-stream"), fileInput.file);
                 builder.addFormDataPart(fileInput.key, fileInput.filename, fileBody);
             }
-            RequestBody requestBody = builder.build();
-            DecorateRequestBody decorateRequestBody = new DecorateRequestBody(requestBody, new DecorateRequestBody.ProgressListner() {
-                @Override
-                public void onProgress(long bytesWritten, long totalSize) {
-                    RequestClient.getInstance().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-
-                        }
-                    });
-                }
-            });
-            return decorateRequestBody;
+            return builder.build();
         }
+    }
+
+    @Override
+    public RequestBody wrapRequestBody(RequestBody requestBody, final Callback callback) {
+        if (callback == null) {
+            return requestBody;
+        }
+        DecorateRequestBody decorateRequestBody = new DecorateRequestBody(requestBody, new DecorateRequestBody.ProgressListner() {
+            @Override
+            public void onProgress(final long bytesWritten, final long totalSize) {
+                RequestClient.getInstance().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onProgress(bytesWritten * 1.0f / totalSize);
+                    }
+                });
+            }
+        });
+        return decorateRequestBody;
     }
 
     @Override

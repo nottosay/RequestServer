@@ -1,5 +1,7 @@
 package com.requestserver.request;
 
+import com.requestserver.callback.Callback;
+
 import java.util.Map;
 
 import okhttp3.FormBody;
@@ -59,5 +61,11 @@ public abstract class HttpRequest {
     public abstract Request buildRequest();
 
     public abstract RequestBody buildRequestBody();
+
+    public RequestBody wrapRequestBody(RequestBody requestBody, Callback callback) {
+        return requestBody;
+    }
+
+    ;
 
 }
