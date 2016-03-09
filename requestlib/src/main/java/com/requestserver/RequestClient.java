@@ -25,7 +25,6 @@ public class RequestClient {
     private static RequestClient mInstance;
     private OkHttpClient mOkHttpClient;
     private Handler mHandler;
-    private Call requestCall;
 
 
     private RequestClient(OkHttpClient okHttpClient) {
@@ -77,12 +76,8 @@ public class RequestClient {
     }
 
 
-    public void execute(final Call requestCall, Callback callback) {
-        this.requestCall = requestCall;
-        execute(callback);
-    }
 
-    public void execute(Callback callback) {
+    public void execute(final Call requestCall, Callback callback) {
         if (callback == null) {
             callback = Callback.CALLBACK_DEFAULT;
         }
@@ -168,17 +163,8 @@ public class RequestClient {
     }
 
 
-
-    public RequestClient newCall(Request request) {
-        requestCall = mOkHttpClient.newCall(request);
-        return mInstance;
+    public Call newCall(Request request) {
+        return mOkHttpClient.newCall(request);
     }
 
-
-    public static class METHOD {
-        public static final String HEAD = "HEAD";
-        public static final String DELETE = "DELETE";
-        public static final String PUT = "PUT";
-        public static final String PATCH = "PATCH";
-    }
 }

@@ -1,6 +1,6 @@
 package com.requestserver.builder;
 
-import com.requestserver.RequestClient;
+import com.requestserver.RequestCall;
 
 import java.util.Map;
 
@@ -27,8 +27,8 @@ public abstract class RequestBuilder {
 
     public abstract Request addRequest();
 
-    public RequestClient build() {
-        return RequestClient.getInstance().newCall(addRequest());
+    public RequestCall build() {
+        return new RequestCall(this);
     }
 
 }
