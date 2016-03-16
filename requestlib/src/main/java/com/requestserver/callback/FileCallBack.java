@@ -26,8 +26,8 @@ public abstract class FileCallBack extends Callback<File> {
     public abstract void onProgress(float progress, long total);
 
     /**
-     * @param destFileDir
-     * @param destFileName
+     * @param destFileDir 文件夹路径
+     * @param destFileName 文件名
      */
     public FileCallBack(String destFileDir, String destFileName) {
         this.destFileDir = destFileDir;
