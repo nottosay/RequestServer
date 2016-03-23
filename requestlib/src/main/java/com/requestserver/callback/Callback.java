@@ -43,7 +43,7 @@ public abstract class Callback<T> {
 
     public abstract void onSuccess(T response);
 
-    public abstract void onFailure();
+    public abstract void onFailure(String response);
 
 
     public static Callback CALLBACK_DEFAULT = new Callback() {
@@ -59,7 +59,7 @@ public abstract class Callback<T> {
         }
 
         @Override
-        public void onFailure() {
+        public void onFailure(String response) {
 
         }
 
