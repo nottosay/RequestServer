@@ -91,7 +91,7 @@ public class RequestClient {
 
             @Override
             public void onResponse(final Call call, final Response response) {
-                if (response.code() >= 400 && response.code() <= 599) {
+                if (response.code() !=200) {
                     try {
                         sendFailResultCallback(call, new RuntimeException(response.body().string()), finalCallback);
                     } catch (IOException e) {
@@ -111,7 +111,12 @@ public class RequestClient {
         });
     }
 
-
+    /**
+     * 请求异常回调
+     * @param call
+     * @param e
+     * @param callback
+     */
     private void sendFailResultCallback(final Call call, final Exception e, final Callback callback) {
         if (callback == null) return;
 
@@ -124,12 +129,17 @@ public class RequestClient {
         });
     }
 
+    /**
+     * 成功回调
+     * @param object
+     * @param callback
+     */
     private void sendSuccessResultCallback(final Object object, final Callback callback) {
         if (callback == null) return;
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                callback.onResponse(object);
+                callback.onSuccess(object);
                 callback.onFinish();
             }
         });

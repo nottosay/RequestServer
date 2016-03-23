@@ -1,6 +1,5 @@
 package com.requestserver.callback;
 
-import okhttp3.Call;
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -40,9 +39,11 @@ public abstract class Callback<T> {
      */
     public abstract T parseNetworkResponse(Response response) throws Exception;
 
-    public abstract void onError(Call call, Exception e);
+    public abstract void onError();
 
-    public abstract void onResponse(T response);
+    public abstract void onSuccess(T response);
+
+    public abstract void onFailure();
 
 
     public static Callback CALLBACK_DEFAULT = new Callback() {
@@ -53,12 +54,17 @@ public abstract class Callback<T> {
         }
 
         @Override
-        public void onError(Call call, Exception e) {
+        public void onSuccess(Object response) {
 
         }
 
         @Override
-        public void onResponse(Object response) {
+        public void onFailure() {
+
+        }
+
+        @Override
+        public void onError() {
 
         }
     };
