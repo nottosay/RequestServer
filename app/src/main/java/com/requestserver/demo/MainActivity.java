@@ -6,7 +6,6 @@ import android.os.Bundle;
 import com.requestserver.RequestClient;
 import com.requestserver.callback.Callback;
 
-import okhttp3.Call;
 import okhttp3.Response;
 
 public class MainActivity extends Activity {
@@ -22,12 +21,17 @@ public class MainActivity extends Activity {
             }
 
             @Override
-            public void onError(Call call, Exception e) {
+            public void onError() {
 
             }
 
             @Override
-            public void onResponse(Object response) {
+            public void onSuccess(Object response) {
+
+            }
+
+            @Override
+            public void onFailure(String response) {
 
             }
         });
