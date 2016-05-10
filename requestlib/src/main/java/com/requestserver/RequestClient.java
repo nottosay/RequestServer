@@ -76,7 +76,6 @@ public class RequestClient {
     }
 
 
-
     public void execute(final Call requestCall, Callback callback) {
         if (callback == null) {
             callback = Callback.CALLBACK_DEFAULT;
@@ -86,17 +85,13 @@ public class RequestClient {
         requestCall.enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(Call call, final IOException e) {
-                sendFailResultCallback(call, e, finalCallback);
+                sendFailResultCallback(finalCallback);
             }
 
             @Override
             public void onResponse(final Call call, final Response response) {
-                if (response.code() !=200) {
-                    try {
-                        sendFailResultCallback(call, new RuntimeException(response.body().string()), finalCallback);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                if (response.code() != 200) {
+                    sendFailResultCallback(finalCallback);
                     return;
                 }
 
@@ -104,26 +99,24 @@ public class RequestClient {
                     Object object = finalCallback.parseNetworkResponse(response);
                     sendSuccessResultCallback(object, finalCallback);
                 } catch (Exception e) {
-                    sendFailResultCallback(call, e, finalCallback);
+                    sendFailResultCallback(finalCallback);
                 }
-
             }
         });
     }
 
     /**
      * 请求异常回调
-     * @param call
-     * @param e
+     *
      * @param callback
      */
-    private void sendFailResultCallback(final Call call, final Exception e, final Callback callback) {
+    private void sendFailResultCallback(final Callback callback) {
         if (callback == null) return;
 
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                callback.onError(call, e);
+                callback.onError();
                 callback.onFinish();
             }
         });
@@ -131,6 +124,7 @@ public class RequestClient {
 
     /**
      * 成功回调
+     *
      * @param object
      * @param callback
      */
