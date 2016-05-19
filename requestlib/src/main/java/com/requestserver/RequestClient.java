@@ -99,6 +99,7 @@ public class RequestClient {
                     Object object = finalCallback.parseNetworkResponse(response);
                     sendSuccessResultCallback(object, finalCallback);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     sendFailResultCallback(finalCallback);
                 }
             }
