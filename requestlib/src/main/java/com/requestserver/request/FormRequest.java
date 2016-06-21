@@ -1,6 +1,5 @@
 package com.requestserver.request;
 
-import com.requestserver.RequestClient;
 import com.requestserver.callback.Callback;
 
 import java.io.File;
@@ -13,6 +12,10 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by wally.yan on 2016/3/8.
@@ -52,13 +55,16 @@ public class FormRequest extends HttpRequest {
         if (callback == null) {
             return requestBody;
         }
+
         DecorateRequestBody decorateRequestBody = new DecorateRequestBody(requestBody, new DecorateRequestBody.ProgressListner() {
             @Override
             public void onProgress(final long bytesWritten, final long totalSize) {
-                RequestClient.getInstance().runOnUiThread(new Runnable() {
+                long[] longs = new long[]{bytesWritten, totalSize};
+                Observable.just(longs).subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<long[]>() {
                     @Override
-                    public void run() {
-                        callback.onProgress(bytesWritten * 1.0f / totalSize);
+                    public void call(long[] longs) {
+                        callback.onProgress(longs[0], longs[1]);
                     }
                 });
             }

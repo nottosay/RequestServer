@@ -1,14 +1,16 @@
 package com.requestserver.callback;
 
 
-import com.requestserver.RequestClient;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import okhttp3.Response;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by wally.yan on 2015/11/8.
@@ -23,10 +25,8 @@ public abstract class FileCallBack extends Callback<File> {
      */
     private String destFileName;
 
-    public abstract void onProgress(float progress, long total);
-
     /**
-     * @param destFileDir 文件夹路径
+     * @param destFileDir  文件夹路径
      * @param destFileName 文件名
      */
     public FileCallBack(String destFileDir, String destFileName) {
@@ -59,11 +59,12 @@ public abstract class FileCallBack extends Callback<File> {
             while ((len = is.read(buf)) != -1) {
                 sum += len;
                 fos.write(buf, 0, len);
-                final long finalSum = sum;
-                RequestClient.getInstance().runOnUiThread(new Runnable() {
+                long[] longs = new long[]{sum, total};
+                Observable.just(longs).subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<long[]>() {
                     @Override
-                    public void run() {
-                        onProgress(finalSum * 1.0f / total, total);
+                    public void call(long[] longs) {
+                        onProgress(longs[0], longs[1]);
                     }
                 });
             }

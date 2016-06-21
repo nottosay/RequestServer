@@ -2,7 +2,6 @@ package com.requestserver.request;
 
 import android.text.TextUtils;
 
-import com.requestserver.RequestClient;
 import com.requestserver.callback.Callback;
 
 import java.io.File;
@@ -11,6 +10,10 @@ import java.util.Map;
 import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by zhy on 15/12/14.
@@ -60,11 +63,13 @@ public class FileRequest extends HttpRequest {
         }
         DecorateRequestBody decorateRequestBody = new DecorateRequestBody(requestBody, new DecorateRequestBody.ProgressListner() {
             @Override
-            public void onProgress(final long bytesWritten,final long totalSize) {
-                RequestClient.getInstance().runOnUiThread(new Runnable() {
+            public void onProgress(final long bytesWritten, final long totalSize) {
+                long[] longs = new long[]{bytesWritten, totalSize};
+                Observable.just(longs).subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<long[]>() {
                     @Override
-                    public void run() {
-                        callback.onProgress(bytesWritten * 1.0f / totalSize);
+                    public void call(long[] longs) {
+                        callback.onProgress(longs[0], longs[1]);
                     }
                 });
             }

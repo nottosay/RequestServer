@@ -1,5 +1,6 @@
 package com.requestserver.callback;
 
+
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -26,9 +27,10 @@ public abstract class Callback<T> {
     /**
      * UI Thread
      *
-     * @param progress
+     * @param bytesWritten 以写入大小
+     * @param totalSize    总大小
      */
-    public void onProgress(float progress) {
+    public void onProgress(long bytesWritten, long totalSize) {
 
     }
 
@@ -43,9 +45,6 @@ public abstract class Callback<T> {
 
     public abstract void onSuccess(T response);
 
-    public abstract void onFailure(String response);
-
-
     public static Callback CALLBACK_DEFAULT = new Callback() {
 
         @Override
@@ -55,11 +54,6 @@ public abstract class Callback<T> {
 
         @Override
         public void onSuccess(Object response) {
-
-        }
-
-        @Override
-        public void onFailure(String response) {
 
         }
 

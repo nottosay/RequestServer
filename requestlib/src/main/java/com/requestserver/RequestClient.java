@@ -1,20 +1,20 @@
 package com.requestserver;
 
-import android.os.Handler;
-import android.os.Looper;
-
 import com.requestserver.builder.FileBuilder;
 import com.requestserver.builder.FormBuilder;
 import com.requestserver.builder.GetBuilder;
 import com.requestserver.builder.HeadBuilder;
 import com.requestserver.callback.Callback;
 
-import java.io.IOException;
-
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import rx.Observable;
+import rx.Observer;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by wally.yan on 2015/11/8.
@@ -24,13 +24,11 @@ public class RequestClient {
     public static final long DEFAULT_MILLISECONDS = 10000;
     private static RequestClient mInstance;
     private OkHttpClient mOkHttpClient;
-    private Handler mHandler;
 
 
     private RequestClient(OkHttpClient okHttpClient) {
         if (okHttpClient == null) {
             OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder();
-            mHandler = new Handler(Looper.getMainLooper());
             mOkHttpClient = okHttpClientBuilder.build();
         } else {
             mOkHttpClient = okHttpClient;
@@ -82,63 +80,44 @@ public class RequestClient {
         }
         final Callback finalCallback = callback;
 
-        requestCall.enqueue(new okhttp3.Callback() {
+        Observable<Object> observable = Observable.create(new Observable.OnSubscribe<Object>() {
             @Override
-            public void onFailure(Call call, final IOException e) {
-                sendFailResultCallback(finalCallback);
-            }
-
-            @Override
-            public void onResponse(final Call call, final Response response) {
-                if (response.code() != 200) {
-                    sendFailResultCallback(finalCallback);
-                    return;
-                }
-
+            public void call(Subscriber<? super Object> subscriber) {
                 try {
-                    Object object = finalCallback.parseNetworkResponse(response);
-                    sendSuccessResultCallback(object, finalCallback);
+                    Response response = requestCall.execute();
+                    if (response.isSuccessful()) {
+                        Object object = finalCallback.parseNetworkResponse(response);
+                        subscriber.onNext(object);
+                    } else {
+                        subscriber.onError(new Exception());
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    sendFailResultCallback(finalCallback);
+                    subscriber.onError(e);
                 }
+                subscriber.onCompleted();
             }
         });
+        observable.subscribeOn(Schedulers.io()) // 指定 subscribe() 发生在 IO 线程
+                .observeOn(AndroidSchedulers.mainThread()) // 指定 Subscriber 的回调发生在主线程
+                .subscribe(new Observer<Object>() {
+                    @Override
+                    public void onCompleted() {
+                        finalCallback.onFinish();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        finalCallback.onError();
+                    }
+
+                    @Override
+                    public void onNext(Object o) {
+                        finalCallback.onSuccess(o);
+                    }
+                });
     }
 
-    /**
-     * 请求异常回调
-     *
-     * @param callback
-     */
-    private void sendFailResultCallback(final Callback callback) {
-        if (callback == null) return;
-
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                callback.onError();
-                callback.onFinish();
-            }
-        });
-    }
-
-    /**
-     * 成功回调
-     *
-     * @param object
-     * @param callback
-     */
-    private void sendSuccessResultCallback(final Object object, final Callback callback) {
-        if (callback == null) return;
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                callback.onSuccess(object);
-                callback.onFinish();
-            }
-        });
-    }
 
     /**
      * 取消请求
@@ -156,15 +135,6 @@ public class RequestClient {
                 call.cancel();
             }
         }
-    }
-
-    /**
-     * 在UI线程运行
-     *
-     * @param runnable
-     */
-    public void runOnUiThread(Runnable runnable) {
-        mHandler.post(runnable);
     }
 
 
