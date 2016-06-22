@@ -55,6 +55,13 @@ public abstract class FileCallBack extends Callback<File> {
                 dir.mkdirs();
             }
             File file = new File(dir, destFileName);
+
+            if (file.exists()) {
+                file.delete();
+            }
+
+            file.createNewFile();
+
             fos = new FileOutputStream(file);
             while ((len = is.read(buf)) != -1) {
                 sum += len;
