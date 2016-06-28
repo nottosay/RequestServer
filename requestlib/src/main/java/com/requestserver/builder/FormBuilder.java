@@ -12,14 +12,12 @@ import okhttp3.Request;
 /**
  * Created by wally.yan on 2016/3/8.
  */
-public class FormBuilder extends RequestBuilder {
+public class FormBuilder extends BaseBuilder {
 
     private List<FormRequest.FileInput> files = new ArrayList<FormRequest.FileInput>();
 
-    @Override
-    public FormBuilder url(String url) {
-        this.url = url;
-        return this;
+    public FormBuilder(String url) {
+        super(url);
     }
 
     @Override
@@ -46,7 +44,7 @@ public class FormBuilder extends RequestBuilder {
     }
 
     @Override
-    public Request addRequest() {
+    public Request getRequest() {
         return new FormRequest(url, tag, params, headers, files).buildRequest();
     }
 }

@@ -8,7 +8,7 @@ import okhttp3.RequestBody;
 /**
  * Created by wally.yan on 2016/3/8.
  */
-public class HeadRequest extends HttpRequest {
+public class HeadRequest extends BaseRequest {
 
     public HeadRequest(String url, Object tag, Map<String, String> params, Map<String, String> headers) {
         super(url, tag, params, headers);

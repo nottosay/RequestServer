@@ -18,7 +18,7 @@ import rx.schedulers.Schedulers;
 /**
  * Created by zhy on 15/12/14.
  */
-public class FileRequest extends HttpRequest {
+public class FileRequest extends BaseRequest {
     private static MediaType MEDIA_TYPE_STREAM = MediaType.parse("application/octet-stream");
 
     private File file;

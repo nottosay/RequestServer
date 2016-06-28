@@ -13,14 +13,14 @@ import okhttp3.RequestBody;
 /**
  * Created by wally.yan on 2016/3/8.
  */
-public abstract class HttpRequest {
+public abstract class BaseRequest {
     protected String url;
     protected Object tag;
     protected Map<String, String> params;
     protected Map<String, String> headers;
     protected Request.Builder builder = new Request.Builder();
 
-    public HttpRequest(String url, Object tag, Map<String, String> params, Map<String, String> headers) {
+    public BaseRequest(String url, Object tag, Map<String, String> params, Map<String, String> headers) {
         this.url = url;
         this.tag = tag;
         this.params = params;
@@ -65,7 +65,5 @@ public abstract class HttpRequest {
     public RequestBody wrapRequestBody(RequestBody requestBody, Callback callback) {
         return requestBody;
     }
-
-    ;
 
 }

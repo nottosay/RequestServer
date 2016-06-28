@@ -10,14 +10,13 @@ import okhttp3.Request;
 /**
  * Created by wally.yan on 2016/3/8.
  */
-public class FileBuilder extends RequestBuilder {
+public class FileBuilder extends BaseBuilder {
 
     private File file;
 
-    @Override
-    public FileBuilder url(String url) {
-        this.url = url;
-        return this;
+    public FileBuilder(String url, File file) {
+        super(url);
+        this.file = file;
     }
 
     @Override
@@ -38,13 +37,8 @@ public class FileBuilder extends RequestBuilder {
         return this;
     }
 
-    public FileBuilder file(File file) {
-        this.file = file;
-        return this;
-    }
-
     @Override
-    public Request addRequest() {
+    public Request getRequest() {
         return new FileRequest(url, tag, params, headers, file).buildRequest();
     }
 }

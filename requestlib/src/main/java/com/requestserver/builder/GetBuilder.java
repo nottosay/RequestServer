@@ -9,12 +9,10 @@ import okhttp3.Request;
 /**
  * Created by wally.yan on 2016/3/8.
  */
-public class GetBuilder extends RequestBuilder {
+public class GetBuilder extends BaseBuilder {
 
-    @Override
-    public GetBuilder url(String url) {
-        this.url = url;
-        return this;
+    public GetBuilder(String url) {
+        super(url);
     }
 
     @Override
@@ -36,7 +34,7 @@ public class GetBuilder extends RequestBuilder {
     }
 
     @Override
-    public Request addRequest() {
+    public Request getRequest() {
         return new GetRequest(url, tag, params, headers).buildRequest();
     }
 }

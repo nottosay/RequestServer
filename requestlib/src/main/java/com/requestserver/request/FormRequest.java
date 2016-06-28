@@ -20,7 +20,7 @@ import rx.schedulers.Schedulers;
 /**
  * Created by wally.yan on 2016/3/8.
  */
-public class FormRequest extends HttpRequest {
+public class FormRequest extends BaseRequest {
 
     private List<FileInput> files = new ArrayList<FileInput>();
 

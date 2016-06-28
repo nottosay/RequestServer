@@ -1,12 +1,13 @@
 package com.requestserver.callback;
 
 
+import com.requestserver.response.NetworkResponse;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import okhttp3.Response;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -36,11 +37,12 @@ public abstract class FileCallBack extends Callback<File> {
 
 
     @Override
-    public File parseNetworkResponse(Response response) throws Exception {
-        return saveFile(response);
+    public File parseNetworkResponse(NetworkResponse networkResponse) throws Exception {
+        return saveFile(networkResponse.httpResponse);
     }
 
-    public File saveFile(Response response) throws IOException {
+
+    public File saveFile(okhttp3.Response response) throws IOException {
         InputStream is = null;
         byte[] buf = new byte[2048];
         int len = 0;

@@ -1,19 +1,17 @@
 package com.requestserver.callback;
 
 
-import okhttp3.Request;
-import okhttp3.Response;
+import com.requestserver.response.NetworkResponse;
 
 /**
  * Created by wally.yan on 2015/11/8.
  */
 public abstract class Callback<T> {
+
     /**
      * UI Thread
-     *
-     * @param request
      */
-    public void onStart(Request request) {
+    public void onStart() {
     }
 
     /**
@@ -37,30 +35,12 @@ public abstract class Callback<T> {
     /**
      * Thread Pool Thread
      *
-     * @param response
+     * @param networkResponse
      */
-    public abstract T parseNetworkResponse(Response response) throws Exception;
+    public abstract T parseNetworkResponse(NetworkResponse networkResponse) throws Exception;
 
     public abstract void onError();
 
     public abstract void onSuccess(T response);
-
-    public static Callback CALLBACK_DEFAULT = new Callback() {
-
-        @Override
-        public Object parseNetworkResponse(Response response) throws Exception {
-            return null;
-        }
-
-        @Override
-        public void onSuccess(Object response) {
-
-        }
-
-        @Override
-        public void onError() {
-
-        }
-    };
 
 }

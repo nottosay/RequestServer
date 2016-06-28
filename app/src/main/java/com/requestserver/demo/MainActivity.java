@@ -3,7 +3,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.requestserver.RequestClient;
+import com.requestserver.RequestServer;
 import com.requestserver.callback.Callback;
 
 import java.util.HashMap;
@@ -22,26 +22,21 @@ public class MainActivity extends Activity {
         Map<String, String> params = new HashMap<String, String>();
         params.put("accountName", "phone");
         params.put("accountPwd", "12345");
-        RequestClient.post().params(params).url("http://220.162.244.140:4321/Account/Login").build().execute(new Callback() {
+        RequestServer.getInstance().post("http://220.162.244.140:4321/Account/Login").params(params).build(this).execute(new Callback() {
             @Override
             public Object parseNetworkResponse(Response response) throws Exception {
                 String result = response.body().string();
-                Log.i("wally",result);
+                Log.i("wally", result);
                 return null;
             }
 
             @Override
             public void onError() {
-                Log.i("wally","onError");
+                Log.i("wally", "onError");
             }
 
             @Override
             public void onSuccess(Object response) {
-
-            }
-
-            @Override
-            public void onFailure(String response) {
 
             }
         });
