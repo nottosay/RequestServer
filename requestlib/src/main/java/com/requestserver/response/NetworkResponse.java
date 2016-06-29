@@ -6,9 +6,12 @@ package com.requestserver.response;
 
 public class NetworkResponse {
 
+    //response code
     public int code;
 
+    //response body
     public String body;
 
+    //response
     public okhttp3.Response httpResponse;
 }

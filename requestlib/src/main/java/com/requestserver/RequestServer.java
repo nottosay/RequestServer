@@ -29,10 +29,14 @@ public class RequestServer {
     private static RequestServer mInstance;
     private OkHttpClient mOkHttpClient;
     private Cache mCache;
+    private static Context mContext;
 
     private RequestServer() {
         OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder();
         mOkHttpClient = okHttpClientBuilder.build();
+        File cacheDir = new File(mContext.getCacheDir(), DEFAULT_CACHE_DIR);
+        mCache = new DiskBasedCache(cacheDir);
+        mCache.initialize();
     }
 
 
@@ -47,27 +51,32 @@ public class RequestServer {
         return mInstance;
     }
 
-    public static GetBuilder get(String url) {
+    public static GetBuilder get(Context context, String url) {
         return new GetBuilder(url);
     }
 
-    public static FileBuilder upload(String url, File file) {
+    public static FileBuilder upload(Context context, String url, File file) {
+        mContext = context;
         return new FileBuilder(url, file);
     }
 
-    public static FileBuilder upload(String url, String filePath) {
+    public static FileBuilder upload(Context context, String url, String filePath) {
+        mContext = context;
         return new FileBuilder(url, new File(filePath));
     }
 
-    public static FormBuilder post(String url) {
+    public static FormBuilder post(Context context, String url) {
+        mContext = context;
         return new FormBuilder(url);
     }
 
-    public static PutBuilder put(String url) {
+    public static PutBuilder put(Context context, String url) {
+        mContext = context;
         return new PutBuilder(url);
     }
 
-    public static HeadBuilder head(String url) {
+    public static HeadBuilder head(Context context, String url) {
+        mContext = context;
         return new HeadBuilder(url);
     }
 
@@ -94,11 +103,6 @@ public class RequestServer {
         }
     }
 
-    public void setContext(Context context) {
-        File cacheDir = new File(context.getCacheDir(), DEFAULT_CACHE_DIR);
-        mCache = new DiskBasedCache(cacheDir);
-    }
-
     public Cache getCache() {
         return mCache;
     }
@@ -107,4 +111,11 @@ public class RequestServer {
         return mOkHttpClient.newCall(request);
     }
 
+    /**
+     * 清空缓存
+     */
+    public static void clearCache(){
+        RequestServer requestServer = RequestServer.getInstance();
+        requestServer.getCache().clear();
+    }
 }

@@ -118,7 +118,9 @@ public class RequestCall {
                       if (response.isSuccessful()) {
                           if (needCache){
                               CacheEntry cacheEntry = HttpHeaderParser.parseCacheHeaders(response);
-                              cache.put(baseBuilder.getUrl(),cacheEntry);
+                              if (cacheEntry != null) {
+                                  cache.put(baseBuilder.getUrl(), cacheEntry);
+                              }
                           }
                           if (callback != null) {
                               Object object = callback.parseNetworkResponse(networkResponse);

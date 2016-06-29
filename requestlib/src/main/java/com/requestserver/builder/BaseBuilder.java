@@ -3,7 +3,6 @@ package com.requestserver.builder;
 import android.content.Context;
 
 import com.requestserver.RequestCall;
-import com.requestserver.RequestServer;
 
 import java.util.Map;
 
@@ -38,7 +37,6 @@ public abstract class BaseBuilder {
     }
 
     public RequestCall build(Context context) {
-        RequestServer.getInstance().setContext(context);
         return new RequestCall(this);
     }
 

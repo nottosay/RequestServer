@@ -1,15 +1,15 @@
 package com.requestserver.demo;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.requestserver.RequestServer;
 import com.requestserver.callback.Callback;
+import com.requestserver.response.NetworkResponse;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import okhttp3.Response;
 
 
 
@@ -24,8 +24,8 @@ public class MainActivity extends Activity {
         params.put("accountPwd", "12345");
         RequestServer.getInstance().post("http://220.162.244.140:4321/Account/Login").params(params).build(this).execute(new Callback() {
             @Override
-            public Object parseNetworkResponse(Response response) throws Exception {
-                String result = response.body().string();
+            public Object parseNetworkResponse(NetworkResponse response) throws Exception {
+                String result = response.body;
                 Log.i("wally", result);
                 return null;
             }
