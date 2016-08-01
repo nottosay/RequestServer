@@ -36,7 +36,6 @@ createJar.dependsOn(clearJar, build)
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'io.reactivex:rxjava:1.1.6'
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'com.squareup.okhttp3:okhttp:3.3.1'
 }

@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-
 public class MainActivity extends Activity {
 
     @Override
@@ -22,7 +21,7 @@ public class MainActivity extends Activity {
         Map<String, String> params = new HashMap<String, String>();
         params.put("accountName", "phone");
         params.put("accountPwd", "12345");
-        RequestServer.getInstance().post("http://220.162.244.140:4321/Account/Login").params(params).build(this).execute(new Callback() {
+        RequestServer.getInstance().post(MainActivity.this, "http://220.162.244.140:4321/Account/Login").params(params).build(this).execute(new Callback() {
             @Override
             public Object parseNetworkResponse(NetworkResponse response) throws Exception {
                 String result = response.body;
