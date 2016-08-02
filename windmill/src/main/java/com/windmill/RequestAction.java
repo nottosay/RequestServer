@@ -11,7 +11,6 @@ import com.windmill.response.WindmillResponse;
 import okhttp3.Call;
 import okhttp3.Response;
 import rx.Observable;
-import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -77,28 +76,7 @@ public class RequestAction {
                           }
         ).subscribeOn(Schedulers.io()) // 指定 subscribe() 发生在 IO 线程
                 .observeOn(AndroidSchedulers.mainThread()) // 指定 Subscriber 的回调发生在主线程
-                .subscribe(new Observer<Object>() {
-                    @Override
-                    public void onCompleted() {
-                        if (callback != null) {
-                            callback.onFinish();
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        if (callback != null) {
-                            callback.onError();
-                        }
-                    }
-
-                    @Override
-                    public void onNext(Object o) {
-                        if (callback != null) {
-                            callback.onSuccess(o);
-                        }
-                    }
-                });
+                .subscribe(new CustomSubscriber(callback));
     }
 
     private void requestNetwork(final boolean needCache, final Callback callback) {
@@ -147,27 +125,7 @@ public class RequestAction {
                           }
         ).subscribeOn(Schedulers.io()) // 指定 subscribe() 发生在 IO 线程
                 .observeOn(AndroidSchedulers.mainThread()) // 指定 Subscriber 的回调发生在主线程
-                .subscribe(new Observer<Object>() {
-                    @Override
-                    public void onCompleted() {
-                        if (callback != null) {
-                            callback.onFinish();
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        if (callback != null) {
-                            callback.onError();
-                        }
-                    }
-
-                    @Override
-                    public void onNext(Object o) {
-                        if (callback != null) {
-                            callback.onSuccess(o);
-                        }
-                    }
-                });
+                .subscribe(new CustomSubscriber(callback));
     }
+
 }
