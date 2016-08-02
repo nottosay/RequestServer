@@ -1,16 +1,20 @@
 package com.windmill.demo;
 
+import java.util.List;
+
 /**
  * Created by wally.yan on 2016/8/1.
  */
 
 public class CustomerResult {
-    public String code;
-    public String msg;
-    public Customer data;
+    public String error;
+    public List<Result> results;
 
-    public class Customer {
-        public String customerNo;
-        public String customerName;
+    public static  class Result{
+        public String _id;
+        public String createdAt;
+        public String desc;
+        public String type;
+        public String url;
     }
 }

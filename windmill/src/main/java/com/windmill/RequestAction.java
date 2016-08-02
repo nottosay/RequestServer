@@ -8,6 +8,8 @@ import com.windmill.cache.HttpHeaderParser;
 import com.windmill.callback.Callback;
 import com.windmill.response.WindmillResponse;
 
+import org.apache.http.client.HttpResponseException;
+
 import okhttp3.Call;
 import okhttp3.Response;
 import rx.Observable;
@@ -30,7 +32,7 @@ public class RequestAction {
      *
      * @param callback 请求回调
      */
-    public void execute(final Callback callback) {
+    public <T> void execute(final Callback<T> callback) {
         if (!baseBuilder.isCacheEnable()) {
             requestNetwork(false, callback);
             return;
@@ -54,16 +56,17 @@ public class RequestAction {
         requestNetwork(true, null);
     }
 
-    private void requestCache(final CacheEntry cacheEntry, final Callback callback) {
-        Observable.create(new Observable.OnSubscribe<Object>() {
+    private <T> void requestCache(final CacheEntry cacheEntry, final Callback<T> callback) {
+        Observable.create(new Observable.OnSubscribe<T>() {
                               @Override
-                              public void call(Subscriber<? super Object> subscriber) {
+                              public void call(Subscriber<? super T> subscriber) {
                                   try {
+                                      subscriber.onStart();
                                       WindmillResponse windmillResponse = new WindmillResponse();
                                       windmillResponse.code = 200;
                                       windmillResponse.body = new String(cacheEntry.data);
                                       if (callback != null) {
-                                          Object object = callback.parseResponse(windmillResponse);
+                                          T object = callback.parseResponse(windmillResponse);
                                           subscriber.onNext(object);
                                       }
                                   } catch (Exception e) {
@@ -76,15 +79,16 @@ public class RequestAction {
                           }
         ).subscribeOn(Schedulers.io()) // 指定 subscribe() 发生在 IO 线程
                 .observeOn(AndroidSchedulers.mainThread()) // 指定 Subscriber 的回调发生在主线程
-                .subscribe(new CustomSubscriber(callback));
+                .subscribe(new CustomSubscriber<>(callback));
     }
 
-    private void requestNetwork(final boolean needCache, final Callback callback) {
+    private <T> void requestNetwork(final boolean needCache, final Callback<T> callback) {
         final Call call = Windmill.getInstance().newCall(baseBuilder.getRequest());
-        Observable.create(new Observable.OnSubscribe<Object>() {
+        Observable.create(new Observable.OnSubscribe<T>() {
                               @Override
-                              public void call(Subscriber<? super Object> subscriber) {
+                              public void call(Subscriber<? super T> subscriber) {
                                   try {
+                                      subscriber.onStart();
                                       WindmillResponse windmillResponse = new WindmillResponse();
                                       Response response = call.execute();
                                       windmillResponse.code = response.code();
@@ -98,22 +102,18 @@ public class RequestAction {
                                                   cache.put(baseBuilder.getUrl(), cacheEntry);
                                               }
                                           }
-                                          if (callback != null) {
-                                              Object object = callback.parseResponse(windmillResponse);
-                                              subscriber.onNext(object);
-                                          }
                                       } else if (windmillResponse.code == 304) {//Not Modified
                                           CacheEntry cacheEntry = cache.get(baseBuilder.getUrl());
                                           if (cacheEntry != null) {
                                               windmillResponse.code = 304;
                                               windmillResponse.body = new String(cacheEntry.data);
-                                              if (callback != null) {
-                                                  Object object = callback.parseResponse(windmillResponse);
-                                                  subscriber.onNext(object);
-                                              }
                                           }
                                       } else {
-                                          subscriber.onError(new Exception());
+                                          subscriber.onError(new HttpResponseException(response.code(),response.message()));
+                                      }
+                                      if (callback != null) {
+                                          T object = callback.parseResponse(windmillResponse);
+                                          subscriber.onNext(object);
                                       }
                                   } catch (Exception e) {
                                       e.printStackTrace();
@@ -125,7 +125,7 @@ public class RequestAction {
                           }
         ).subscribeOn(Schedulers.io()) // 指定 subscribe() 发生在 IO 线程
                 .observeOn(AndroidSchedulers.mainThread()) // 指定 Subscriber 的回调发生在主线程
-                .subscribe(new CustomSubscriber(callback));
+                .subscribe(new CustomSubscriber<>(callback));
     }
 
 }

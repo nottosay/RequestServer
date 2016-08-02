@@ -52,6 +52,7 @@ public class Windmill {
     }
 
     public static GetBuilder get(Context context, String url) {
+        mContext = context;
         return new GetBuilder(url);
     }
 

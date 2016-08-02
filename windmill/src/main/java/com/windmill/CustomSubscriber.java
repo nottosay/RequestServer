@@ -12,7 +12,7 @@ public class CustomSubscriber<T> extends Subscriber<T> {
 
     private Callback<T> callback;
 
-    public CustomSubscriber(Callback<T> callback) {
+    public  CustomSubscriber(Callback<T> callback) {
         this.callback = callback;
     }
 
