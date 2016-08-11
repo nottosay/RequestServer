@@ -8,20 +8,12 @@ import rx.Subscriber;
  * Created by wally.yan on 2016/8/2.
  */
 
-public class CustomSubscriber<T> extends Subscriber<T> {
+public class SubscriberCallback<T> extends Subscriber<T> {
 
     private Callback<T> callback;
 
-    public  CustomSubscriber(Callback<T> callback) {
+    public SubscriberCallback(Callback<T> callback) {
         this.callback = callback;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (callback != null) {
-            callback.onStart();
-        }
     }
 
     @Override

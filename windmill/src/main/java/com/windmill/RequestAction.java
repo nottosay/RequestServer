@@ -61,7 +61,6 @@ public class RequestAction {
                               @Override
                               public void call(Subscriber<? super T> subscriber) {
                                   try {
-                                      subscriber.onStart();
                                       WindmillResponse windmillResponse = new WindmillResponse();
                                       windmillResponse.code = 200;
                                       windmillResponse.body = new String(cacheEntry.data);
@@ -79,7 +78,7 @@ public class RequestAction {
                           }
         ).subscribeOn(Schedulers.io()) // 指定 subscribe() 发生在 IO 线程
                 .observeOn(AndroidSchedulers.mainThread()) // 指定 Subscriber 的回调发生在主线程
-                .subscribe(new CustomSubscriber<>(callback));
+                .subscribe(new SubscriberCallback<>(callback));
     }
 
     private <T> void requestNetwork(final boolean needCache, final Callback<T> callback) {
@@ -88,7 +87,6 @@ public class RequestAction {
                               @Override
                               public void call(Subscriber<? super T> subscriber) {
                                   try {
-                                      subscriber.onStart();
                                       WindmillResponse windmillResponse = new WindmillResponse();
                                       Response response = call.execute();
                                       windmillResponse.code = response.code();
@@ -125,7 +123,7 @@ public class RequestAction {
                           }
         ).subscribeOn(Schedulers.io()) // 指定 subscribe() 发生在 IO 线程
                 .observeOn(AndroidSchedulers.mainThread()) // 指定 Subscriber 的回调发生在主线程
-                .subscribe(new CustomSubscriber<>(callback));
+                .subscribe(new SubscriberCallback<>(callback));
     }
 
 }

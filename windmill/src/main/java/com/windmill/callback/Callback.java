@@ -10,12 +10,6 @@ public abstract class Callback<T> {
 
     /**
      * UI Thread
-     */
-    public void onStart() {
-    }
-
-    /**
-     * UI Thread
      *
      * @param
      */
