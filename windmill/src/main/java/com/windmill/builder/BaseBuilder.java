@@ -2,7 +2,7 @@ package com.windmill.builder;
 
 import android.content.Context;
 
-import com.windmill.RequestAction;
+import com.windmill.RequestAction1;
 
 import java.util.Map;
 
@@ -36,8 +36,8 @@ public abstract class BaseBuilder {
         this.cacheEnable = cacheEnable;
     }
 
-    public RequestAction build(Context context) {
-        return new RequestAction(this);
+    public RequestAction1 build(Context context) {
+        return new RequestAction1(this);
     }
 
     public String getUrl() {

@@ -17,6 +17,14 @@ public class SubscriberCallback<T> extends Subscriber<T> {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        if (callback != null) {
+            callback.onStart();
+        }
+    }
+
+    @Override
     public void onCompleted() {
         if (callback != null) {
             callback.onFinish();
@@ -27,6 +35,7 @@ public class SubscriberCallback<T> extends Subscriber<T> {
     public void onError(Throwable e) {
         if (callback != null) {
             callback.onError();
+            callback.onFinish();
         }
     }
 

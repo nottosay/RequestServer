@@ -13,6 +13,15 @@ public abstract class Callback<T> {
      *
      * @param
      */
+    public void onStart() {
+    }
+
+
+    /**
+     * UI Thread
+     *
+     * @param
+     */
     public void onFinish() {
     }
 
