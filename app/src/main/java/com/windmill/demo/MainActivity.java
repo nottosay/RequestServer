@@ -19,7 +19,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         textView = (TextView) findViewById(R.id.tv);
 
-        Windmill.post(MainActivity.this, "http://gank.io/api/data/Android/2/1").build(this).execute(new Callback<CustomerResult>() {
+        Windmill.get(MainActivity.this, "http://gank.io/api/data/Android/2/1").build(this).execute(new Callback<CustomerResult>() {
             @Override
             public void onError() {
                 textView.setText("失败");
