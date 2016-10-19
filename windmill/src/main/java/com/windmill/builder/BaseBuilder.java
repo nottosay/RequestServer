@@ -1,7 +1,5 @@
 package com.windmill.builder;
 
-import android.content.Context;
-
 import com.windmill.RequestAction;
 
 import java.util.Map;
@@ -36,7 +34,7 @@ public abstract class BaseBuilder {
         this.cacheEnable = cacheEnable;
     }
 
-    public RequestAction build(Context context) {
+    public RequestAction build() {
         return new RequestAction(this);
     }
 

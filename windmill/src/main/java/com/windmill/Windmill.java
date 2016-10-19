@@ -81,7 +81,7 @@ public class Windmill {
         return new HeadBuilder(url);
     }
 
-    public OkHttpClient getOkHttpClient() {
+    OkHttpClient getOkHttpClient() {
         return mOkHttpClient;
     }
 
@@ -108,7 +108,7 @@ public class Windmill {
         return mCache;
     }
 
-    public Call newCall(Request request) {
+    Call newCall(Request request) {
         return mOkHttpClient.newCall(request);
     }
 
