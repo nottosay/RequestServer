@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.InputStream;
 
 import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 
 import okhttp3.Call;
@@ -42,11 +43,20 @@ public class Windmill {
 
     private Windmill() {
         OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder();
-        if (mHostNameVerifier != null) {
+        if (mSslSocketFactory != null) {
             okHttpClientBuilder.sslSocketFactory(mSslSocketFactory);
+        } else {
+            okHttpClientBuilder.sslSocketFactory(HttpsUtils.getSslSocketFactory());
         }
         if (mHostNameVerifier != null) {
             okHttpClientBuilder.hostnameVerifier(mHostNameVerifier);
+        }else {
+            okHttpClientBuilder.hostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
         }
         mOkHttpClient = okHttpClientBuilder.build();
         File cacheDir = new File(mContext.getCacheDir(), DEFAULT_CACHE_DIR);
