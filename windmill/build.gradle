@@ -49,6 +49,19 @@ task createJar(type: ShadowJar)  {
 }
 
 
+task createJarOnly(type: Copy){
+    from('build/intermediates/bundles/release/')
+    into('build/outputs/')
+    include('classes.jar')
+    rename ('classes.jar', 'windmill.jar')
+}
+
+task clearJar(type: Delete){
+    delete 'build/outputs/windmill.jar'
+}
+
+createJar.dependsOn(clearJar, build)
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'io.reactivex:rxandroid:1.2.1'
