@@ -11,7 +11,9 @@ import com.windmill.response.WindmillResponse;
 import org.apache.http.client.HttpResponseException;
 
 import okhttp3.Call;
+import okhttp3.MediaType;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func0;
@@ -52,7 +54,7 @@ public class RequestAction {
         }
         observable.subscribeOn(Schedulers.io()) // 指定 subscribe() 发生在 IO 线程
                 .observeOn(AndroidSchedulers.mainThread()) // 指定 Subscriber 的回调发生在主线程
-                .subscribe(new SubscriberCallback<>(callback));
+                .subscribe(new SubscriberCallback<T>(callback));
 
     }
 
@@ -78,7 +80,9 @@ public class RequestAction {
                     }
                     WindmillResponse windmillResponse = new WindmillResponse();
                     windmillResponse.code = 200;
-                    windmillResponse.body = new String(cacheEntry.data);
+                    MediaType mediaType = MediaType.parse("application/json");
+                    Response responseCache = new Response.Builder().body(ResponseBody.create(mediaType,cacheEntry.data)).build();
+                    windmillResponse.httpResponse = responseCache;
                     try {
                         if (callback != null) {
                             T object = callback.parseResponse(windmillResponse);
@@ -111,7 +115,6 @@ public class RequestAction {
                     WindmillResponse windmillResponse = new WindmillResponse();
                     Response response = call.execute();
                     windmillResponse.code = response.code();
-                    windmillResponse.body = response.body().string();
                     windmillResponse.httpResponse = response;
                     Cache cache = Windmill.getInstance().getCache();
                     if (response.isSuccessful()) {
@@ -125,7 +128,9 @@ public class RequestAction {
                         CacheEntry cacheEntry = cache.get(baseBuilder.getUrl());
                         if (cacheEntry != null) {
                             windmillResponse.code = 304;
-                            windmillResponse.body = new String(cacheEntry.data);
+                            MediaType mediaType = MediaType.parse("application/json");
+                            Response responseCache = new Response.Builder().body(ResponseBody.create(mediaType,cacheEntry.data)).build();
+                            windmillResponse.httpResponse = responseCache;
                         }
                     } else {
                         return Observable.error(new HttpResponseException(response.code(), response.message()));

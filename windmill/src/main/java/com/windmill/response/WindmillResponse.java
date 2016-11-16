@@ -9,9 +9,6 @@ public class WindmillResponse {
     //response code
     public int code;
 
-    //response body
-    public String body;
-
     //response
     public okhttp3.Response httpResponse;
 }

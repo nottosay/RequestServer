@@ -60,7 +60,7 @@ task clearJar(type: Delete){
     delete 'build/outputs/windmill.jar'
 }
 
-createJar.dependsOn(clearJar, build)
+createJarOnly.dependsOn(clearJar, build)
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')

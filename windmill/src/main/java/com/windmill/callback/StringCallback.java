@@ -12,7 +12,7 @@ public abstract class StringCallback extends Callback<String> {
 
     @Override
     public String parseResponse(WindmillResponse windmillResponse) throws IOException {
-        return windmillResponse.body;
+        return windmillResponse.httpResponse.body().toString();
     }
 
 }
